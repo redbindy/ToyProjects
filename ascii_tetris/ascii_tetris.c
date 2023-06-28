@@ -16,7 +16,7 @@ static void time_delay();
 static void clear_full_lines(char (*board)[TOTAL_WIDTH]);
 
 enum {
-    DELAY_TIME = 100
+    DELAY_TIME = 300
 };
 
 static const block_t s_SHAPES[BLOCK_TYPE_COUNT] = {
@@ -233,7 +233,7 @@ static bool_t is_collision(const char (*board)[TOTAL_WIDTH], const block_t* bloc
 
 static void time_delay()
 {
-    const int DELAY = 35;
+    const int DELAY = 100;
 
     int start = clock();
 
