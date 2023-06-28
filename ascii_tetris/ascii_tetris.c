@@ -11,14 +11,22 @@ static void draw_block(char (*board)[TOTAL_WIDTH], const block_t* block);
 static void clear_block(char (*board)[TOTAL_WIDTH], const block_t* block);
 static block_t rotate_CW(const block_t* block);
 static block_t rotate_CCW(const block_t* block);
-static void time_delay(void);
+static bool_t is_collision(const char (*board)[TOTAL_WIDTH], const block_t* block);
+static void time_delay();
+static void clear_full_lines(char (*board)[TOTAL_WIDTH]);
 
 enum {
-    DIMENSION = 2
+    DELAY_TIME = 100
 };
 
 static const block_t s_SHAPES[BLOCK_TYPE_COUNT] = {
-    { { 4, 5 }, { { -1, 0 }, { 1, 0 }, { 2, 0 } } },
+    { { 4, 1 }, { { -1, 0 }, { 1, 0 }, { 2, 0 } }, BLOCK_TYPE_I },
+    { { 4, 1 }, { { 1, 0 }, { 0, 1 }, { 1, 1 } }, BLOCK_TYPE_O }, 
+    { { 4, 2 }, { { -1, 0 }, { 0, -1 }, { 1, 0 } }, BLOCK_TYPE_T }, 
+    { { 4, 2 }, { { -2, 0 }, { -1, 0 }, { 0, -1 } }, BLOCK_TYPE_L }, 
+    { { 2, 2 }, { { 2, 0 }, { 1, 0 }, { 0, -1 } }, BLOCK_TYPE_J }, 
+    { { 4, 1 }, { { 1, 0 }, { 0, 1 }, { -1, 1 } }, BLOCK_TYPE_S }, 
+    { { 4, 1 }, { { -1, 0 }, { 0, 1 }, { 1, 1 } }, BLOCK_TYPE_Z }, 
 };
 
 void play_game(void)
@@ -29,7 +37,7 @@ void play_game(void)
     int x;
 
     block_t block;
-    block_t rotated_block;
+    block_t tmp_block;
 
     memset(board, ' ', TOTAL_HEIGHT * TOTAL_WIDTH);
 
@@ -46,86 +54,97 @@ void play_game(void)
     printf("Press Any Key");
     while (!_kbhit()) {
     }
-    time_delay();
     system("cls");
 
-    block = s_SHAPES[0];
+    srand(time(NULL));
+
     while (TRUE) {
+        system("cls");
+        block = s_SHAPES[rand() % BLOCK_TYPE_COUNT];
 
-        print(board);
-        
-        
-        while (TRUE) {
+        if (!is_collision(board, &block)) {
+            draw_block(board, &block);
+        } else {
+            printf("Game Over!");
+            break;
         }
+        print(board);
+        time_delay();
 
-        if (_kbhit()) {
-        
-            rotated_block = block;
-            switch (_getch()) {
+        while (TRUE) {
 
-            case 'a':
-                rotated_block = rotate_CCW(&block);
-                break;
+            int start = clock();
 
-            case 'd':
-                rotated_block = rotate_CW(&block);
-                break;
+            tmp_block = block;
+            while (clock() < start + DELAY_TIME) {
 
-            case 'w':
-                break;
+                if (_kbhit()) {
 
-            default:
-                break;
+                    switch(_getch()) {
+
+                    case 'q':
+                        tmp_block = rotate_CCW(&block);
+                        break;
+    
+                    case 'e':
+                        tmp_block = rotate_CW(&block);
+                        break;
+
+                    case 'a':
+                        tmp_block = block;
+                        tmp_block.origin.x -= 1;
+                        break;
+
+                    case 'd':
+                        tmp_block = block;
+                        tmp_block.origin.x += 1;
+                        break;
+
+                    default:
+                        continue;
+                    }
+
+                    clear_block(board, &block);
+                    if (!is_collision(board, &tmp_block)) {
+                        block = tmp_block;
+                    }
+                    draw_block(board, &block);
+                }
+
+                system("cls");
+                print(board);
+                time_delay();
             }
 
+            tmp_block = block;
+            tmp_block.origin.y += 1;
+
             clear_block(board, &block);
-            block = rotated_block;
+            if (!is_collision(board, &tmp_block)) {
+                block = tmp_block;
+            } else {
+                break;
+            }
             draw_block(board, &block);
 
-        } else {
-
-             int iter;
-
-             vector_t p0 = block.rotation_axis;
-             p0.y += 1;             
-
-             clear_block(board, &block);
-
-             if (board[p0.y][p0.x] != ' ') {
-                 break;
-             }
-
-             for (iter = 0; iter < OTHER_POINT_COUNT; ++iter) {
-
-                 vector_t p = p0;
-                 p.x += (block.vectors)[iter].x;
-                 p.y += (block.vectors)[iter].y;
-
-                 if (board[p.y][p.x] != ' ') {
-                     goto end;
-                 }
-             }
-
-             block.rotation_axis.y += 1;
-
-             draw_block(board, &block);
+            system("cls");
+            print(board);
         }
+        draw_block(board, &block);
 
-        system("cls");
+        clear_full_lines(board);
     }
-
-end:
-;
 }
 
 static void print(const char (*board)[TOTAL_WIDTH])
 {
-    int x;
     int y;
-
     for (y = 0; y < TOTAL_HEIGHT; ++y) {
+
+        int x;
+        const char* p_row = board[y];
         for (x = 0; x < TOTAL_WIDTH; ++x) {
-            printf("%c", board[y][x]);
+            printf("%c", p_row[x]);
         }
         printf("\n");
     }
@@ -133,30 +152,18 @@ static void print(const char (*board)[TOTAL_WIDTH])
 
 static void draw_block(char (*board)[TOTAL_WIDTH], const block_t* block)
 {
-    vector_t center = block->rotation_axis;
-
-    int i;
-    for (i = 0; i < OTHER_POINT_COUNT; ++i) {
-        vector_t vector = (block->vectors)[i];
-
-        board[center.y + vector.y][center.x + vector.x] = 'x';
-    }
-
-    board[center.y][center.x] = 'o';
+    board[block->origin.y][block->origin.x] = 'x';
+    board[block->origin.y + block->vectors[0].y][block->origin.x + block->vectors[0].x] = 'o';
+    board[block->origin.y + block->vectors[1].y][block->origin.x + block->vectors[1].x] = 'o';
+    board[block->origin.y + block->vectors[2].y][block->origin.x + block->vectors[2].x] = 'o';
 }
 
 static void clear_block(char (*board)[TOTAL_WIDTH], const block_t* block)
 {
-    vector_t center = block->rotation_axis;
-
-    int i;
-    for (i = 0; i < OTHER_POINT_COUNT; ++i) {
-        vector_t vector = (block->vectors)[i];
-
-        board[center.y + vector.y][center.x + vector.x] = ' ';
-    }
-
-    board[center.y][center.x] = ' ';
+    board[block->origin.y][block->origin.x] = ' ';
+    board[block->origin.y + block->vectors[0].y][block->origin.x + block->vectors[0].x] = ' ';
+    board[block->origin.y + block->vectors[1].y][block->origin.x + block->vectors[1].x] = ' ';
+    board[block->origin.y + block->vectors[2].y][block->origin.x + block->vectors[2].x] = ' ';
 }
 
 static block_t rotate_CW(const block_t* block)
@@ -164,7 +171,12 @@ static block_t rotate_CW(const block_t* block)
     block_t result = *block;
 
     int i;
-    for (i = 0; i < OTHER_POINT_COUNT; ++i) {
+
+    if (block->type == BLOCK_TYPE_O) {
+        goto ret;
+    }
+
+    for (i = OTHER_POINT_COUNT - 1; i >= 0; --i) {
         int x = (result.vectors)[i].x;
         int y = (result.vectors)[i].y;
 
@@ -172,6 +184,7 @@ static block_t rotate_CW(const block_t* block)
         (result.vectors)[i].y = x;
     }
 
+ret:
     return result;
 }
 
@@ -180,7 +193,12 @@ static block_t rotate_CCW(const block_t* block)
     block_t result = *block;
 
     int i;
-    for (i = 0; i < OTHER_POINT_COUNT; ++i) {
+
+    if (block->type == BLOCK_TYPE_O) {
+        goto ret;
+    }
+
+    for (i = OTHER_POINT_COUNT - 1; i >= 0; --i) {
         int x = (result.vectors)[i].x;
         int y = (result.vectors)[i].y;
 
@@ -188,14 +206,80 @@ static block_t rotate_CCW(const block_t* block)
         (result.vectors)[i].y = -x;
     }
 
+ret:
     return result;
 }
 
-static void time_delay(void)
+static bool_t is_collision(const char (*board)[TOTAL_WIDTH], const block_t* block)
 {
-    const int DELAY_TIME = 300;
-    clock_t start_time = clock();
+    int i;
 
-    while (clock() < start_time + DELAY_TIME) {
+    if (board[block->origin.y][block->origin.x] != ' ') {
+        return TRUE;
+    }
+
+    for (i = OTHER_POINT_COUNT - 1; i >= 0; --i) {
+
+        int x = block->origin.x + (block->vectors)[i].x;
+        int y = block->origin.y + (block->vectors)[i].y;
+
+        if (board[y][x] != ' ') {
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+static void time_delay()
+{
+    const int DELAY = 35;
+
+    int start = clock();
+
+    while (clock() < start + DELAY) {
+    }
+}
+
+static void clear_full_lines(char (*board)[TOTAL_WIDTH])
+{
+    int y;
+    int x;
+    char* p_curr_row;
+    for (y = TOTAL_HEIGHT - 2; y > 1;) {
+
+        p_curr_row = board[y];        
+        for (x = TOTAL_WIDTH - 2; x >= 1; --x) {
+
+            if (p_curr_row[x] == ' ') {
+                break;
+            }
+        }
+
+        if (x == 0) {
+
+            int i;
+            for (i = y; i > 1; --i) {
+
+                char* p_above_row = board[i - 1];
+                p_curr_row = board[i];
+
+                memcpy(p_curr_row, p_above_row, sizeof(char) * TOTAL_WIDTH);
+            }
+        } else {
+            --y;
+        }
+    }
+
+    p_curr_row = board[y];
+    for (x = TOTAL_WIDTH - 2; x >= 1; --x) {
+
+        if (p_curr_row[x] == ' ') {
+            break;
+        }
+    }
+
+    if (x == 0) {
+        memset(p_curr_row + 1, ' ', sizeof(char) * FIELD_WIDTH);
     }
 }

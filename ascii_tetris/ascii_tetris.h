@@ -40,8 +40,10 @@ typedef struct {
 
 typedef struct {
 
-    vector_t rotation_axis;
+    vector_t origin;
     vector_t vectors[OTHER_POINT_COUNT];
+
+    block_type_t type;
 
 } block_t;
 
