@@ -16,13 +16,13 @@ static void time_delay();
 static void clear_full_lines(char* board);
 
 static const block_t s_SHAPES[BLOCK_TYPE_COUNT] = {
-    { { 4, 0 }, { { -1, 0 }, { 1, 0 }, { 2, 0 } }, BLOCK_TYPE_I },
-    { { 4, 0 }, { { 1, 0 }, { 0, 1 }, { 1, 1 } }, BLOCK_TYPE_O },
-    { { 4, 1 }, { { -1, 0 }, { 0, -1 }, { 1, 0 } }, BLOCK_TYPE_T },
-    { { 4, 1 }, { { -2, 0 }, { -1, 0 }, { 0, -1 } }, BLOCK_TYPE_L },
-    { { 2, 1 }, { { 2, 0 }, { 1, 0 }, { 0, -1 } }, BLOCK_TYPE_J },
-    { { 4, 0 }, { { 1, 0 }, { 0, 1 }, { -1, 1 } }, BLOCK_TYPE_S },
-    { { 4, 0 }, { { -1, 0 }, { 0, 1 }, { 1, 1 } }, BLOCK_TYPE_Z },
+    { { 4, 0 }, { { -1, 0 }, { 1, 0 }, { 2, 0 } }, BLOCK_TYPE_I }, 
+    { { 4, 0 }, { { 1, 0 }, { 0, 1 }, { 1, 1 } }, BLOCK_TYPE_O }, 
+    { { 4, 1 }, { { -1, 0 }, { 0, -1 }, { 1, 0 } }, BLOCK_TYPE_T }, 
+    { { 4, 1 }, { { -2, 0 }, { -1, 0 }, { 0, -1 } }, BLOCK_TYPE_L }, 
+    { { 2, 1 }, { { 2, 0 }, { 1, 0 }, { 0, -1 } }, BLOCK_TYPE_J }, 
+    { { 4, 0 }, { { 1, 0 }, { 0, 1 }, { -1, 1 } }, BLOCK_TYPE_S }, 
+    { { 4, 0 }, { { -1, 0 }, { 0, 1 }, { 1, 1 } }, BLOCK_TYPE_Z }
 };
 
 enum {

@@ -1,2 +1,5 @@
-﻿  tetris.c
+﻿  main.c
+  tetris.c
+  Generating Code...
+  LINK : C:\Users\redbindy\Desktop\practice\ToyProjects\asm_ascii_tetris\Debug\asm_ascii_tetris.exe not found or not built by the last incremental link; performing full link
   asm_ascii_tetris.vcxproj -> C:\Users\redbindy\Desktop\practice\ToyProjects\asm_ascii_tetris\Debug\asm_ascii_tetris.exe
