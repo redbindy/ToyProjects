@@ -26,7 +26,7 @@ static const block_t s_SHAPES[BLOCK_TYPE_COUNT] = {
     { { 4, 2 }, { { -2, 0 }, { -1, 0 }, { 0, -1 } }, BLOCK_TYPE_L }, 
     { { 2, 2 }, { { 2, 0 }, { 1, 0 }, { 0, -1 } }, BLOCK_TYPE_J }, 
     { { 4, 1 }, { { 1, 0 }, { 0, 1 }, { -1, 1 } }, BLOCK_TYPE_S }, 
-    { { 4, 1 }, { { -1, 0 }, { 0, 1 }, { 1, 1 } }, BLOCK_TYPE_Z }, 
+    { { 4, 1 }, { { -1, 0 }, { 0, 1 }, { 1, 1 } }, BLOCK_TYPE_Z },
 };
 
 void play_game(void)

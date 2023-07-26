@@ -1,0 +1,14 @@
+﻿  tetris.c
+C:\Users\redbindy\Desktop\practice\ToyProjects\asm_ascii_tetris\tetris.c(19,5): error C4235: nonstandard extension used: '__asm' keyword not supported on this architecture
+C:\Users\redbindy\Desktop\practice\ToyProjects\asm_ascii_tetris\tetris.c(20,13): error C2065: 'mov': undeclared identifier
+C:\Users\redbindy\Desktop\practice\ToyProjects\asm_ascii_tetris\tetris.c(20,13): error C2146: syntax error: missing ';' before identifier 'ecx'
+C:\Users\redbindy\Desktop\practice\ToyProjects\asm_ascii_tetris\tetris.c(20,16): error C2065: 'ecx': undeclared identifier
+C:\Users\redbindy\Desktop\practice\ToyProjects\asm_ascii_tetris\tetris.c(21,9): error C2146: syntax error: missing ';' before identifier 'mov'
+C:\Users\redbindy\Desktop\practice\ToyProjects\asm_ascii_tetris\tetris.c(21,13): error C2065: 'mov': undeclared identifier
+C:\Users\redbindy\Desktop\practice\ToyProjects\asm_ascii_tetris\tetris.c(21,13): error C2146: syntax error: missing ';' before identifier 'eax'
+C:\Users\redbindy\Desktop\practice\ToyProjects\asm_ascii_tetris\tetris.c(21,16): error C2065: 'eax': undeclared identifier
+C:\Users\redbindy\Desktop\practice\ToyProjects\asm_ascii_tetris\tetris.c(22,9): error C2146: syntax error: missing ';' before identifier 'rep'
+C:\Users\redbindy\Desktop\practice\ToyProjects\asm_ascii_tetris\tetris.c(22,13): error C2065: 'rep': undeclared identifier
+C:\Users\redbindy\Desktop\practice\ToyProjects\asm_ascii_tetris\tetris.c(22,13): error C2146: syntax error: missing ';' before identifier 'stosd'
+C:\Users\redbindy\Desktop\practice\ToyProjects\asm_ascii_tetris\tetris.c(23,5): error C2065: 'stosd': undeclared identifier
+C:\Users\redbindy\Desktop\practice\ToyProjects\asm_ascii_tetris\tetris.c(23,5): error C2143: syntax error: missing ';' before '}'
